@@ -1,1 +1,0 @@
-# practica-numerica-joan-pol
