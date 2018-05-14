@@ -13,8 +13,54 @@ typedef vector<double> Row;
 typedef vector<Row> Matrix;
 
 
+double SupremeNorm(Matrix& A, int n){           // Norma del suprem matricial
+    double max = 0;
+    for (int i = 0; i < n; ++i){
+        double sum = 0;
+        for (int j = 0; j < n; ++j){
+            sum += abs(A[i][j]);    
+        }
+        if (sum > max) max = sum;
+    }
+    return max;
+}
+double Norm1(Matrix& A, int n){                 // Norma sub 1 matricial
+    double max = 0;
+    for (int j = 0; j < n; ++j){
+        double sum = 0;
+        for (int i = 0; i < n; ++i){
+            sum += abs(A[i][j]);    
+        }
+        if (sum > max) max = sum;
+    }
+    return max;
+}
+Matrix Product(Matrix& A, Matrix& B, int n){
+    Matrix AB(n, Row(n, 0));
+
+    for (int i = 0; i < n; ++i){
+        for (int j = 0; j < n; ++j){
+            for (int k = 0 ; k < n; ++k){
+                AB[i][j] += A[i][k]*B[k][j];
+            }
+        }
+    } 
+    return AB;
+}
+void PrintMatrix(Matrix& A, int n){
+    for (int i = 0 ; i < n; ++i){
+        for (int j = 0; j < n; ++j){
+            cout << A[i][j] << " ";
+        }
+        cout << endl;
+    }
+    cout << endl << endl << endl;
+    return;
+}
+
+
 // Decomposition A = LU.
-void LU(int n, const Row& a, const Row& b, const Row& c, Row& beta, Row& alpha, Row& epsilon, Row& delta)  {
+void LU(int n, const Row& a, const Row& b, const Row& c, double d, double e, Row& beta, Row& alpha, Row& epsilon, Row& delta)  {
     // alpha i beta
 	alpha[0] = a[0];
 	for (int i = 1; i < n - 1; ++i) {
@@ -92,6 +138,23 @@ double sub1(const Row& a, const Row& b, const Row& c, int n, const Row& beta, co
 	return sum;
 }
 
+void matrius(Row& c, Row& beta, Row& alpha, Row& epsilon, Row& delta, Matrix& L, Matrix& U) {
+    int n = (int)beta.size();
+    // L
+    for (int i = 0; i < n; ++i) L[i][i] = 1;
+    for (int i = 1; i < n - 1; ++i) L[i][i - 1] = beta[i];
+    for (int i = 0; i < n - 1; ++i) L[n - 1][i] = delta[i];
+    cout << "Matriu L: " << endl;
+    PrintMatrix(L, n);
+    
+    // U
+    for (int i = 0; i < n; ++i) U[i][i] = alpha[i];
+    for (int i = 0; i < n - 2; ++i) U[i][i + 1] = c[i];
+    for (int i = 0; i < n - 1; ++i) U[i][n - 1] = epsilon[i];
+    cout << "Matriu U: " << endl;
+    PrintMatrix(U, n);
+}
+
 
 int main(int argc, char *argv[]) {
     
@@ -103,7 +166,6 @@ int main(int argc, char *argv[]) {
             << " per llegir les dades" << endl;
         return 0;
     }
-    
     
     int n;
     fileIn >> n;
@@ -129,11 +191,12 @@ int main(int argc, char *argv[]) {
         c[i] = x;
     }
     
-    double d;
+    /*double d;
     cin >> d;
     
     double e;
-    cin >> e;
+    cin >> e;*/
+    double d = 1, e = -1;
     
     Row q(n, 0);
     for (int i = 1; i < n; ++i) {
@@ -142,31 +205,43 @@ int main(int argc, char *argv[]) {
          q[i] = x;
     }
     
+    fileIn.close();
+    
     cout << "Dimensió del sistema: " << n << endl << endl;
     
 	Row beta(n, 0);
 	Row alpha(n, 0);
-    LU(n, a, b, c, beta, alpha);
+    Row epsilon(n, 0);
+    Row delta (n, 0);
+    LU(n, a, b, c, d, e, beta, alpha, epsilon, delta);
+    
+    // comprovem la norma A - L*U construint les matrius L i U
+    Matrix L(n, Row(n, 0));
+    Matrix U(n, Row(n, 0));
+    matrius(c, beta, alpha, epsilon, delta, L, U);
     
     
-    // Hauríem de comprovar A - L*U.
-    cout << " i  : Alpha  : Beta" << endl;
+    Matrix res = Product(L, U, n);
+    res[n - 1][0] -= d;
+    res[0][n - 1] -= e;
     for (int i = 0; i < n; ++i) {
-        cout << i << ": " << alpha[i] << "  " << beta[i] << endl; 
+        for (int j = 0; j < n; ++j) {
+            res[i][i] -= a[i];
+            if (j != n - 1) { 
+                res[i][i + 1] -= c[i];
+                res[i + 1][j] -= b[i];
+            }
+        }
     }
     
-    Row x(n, 0);
-    solution(n, beta, alpha, q, c, x);
+    cout << "norma sub 1 matricial: " << Norm1(res, n) << endl;
+    cout << "norma sub infinit matricial: " << SupremeNorm(res, n) << endl;
     
-    double epsilon = pow(10, -12);
     
-    double norma = checker(a, b, c, n, beta, alpha, q, epsilon);
-    cout << "Norma del màxim: " << norma << endl;
-    
-    norma = sub1(a, b, c, n, beta, alpha, q, epsilon);
-    cout << "Norma_1: " << norma << endl;
-    
-    fileIn.close();
-    
+    cout << " i  : Alpha  : Beta : Delta : Epsilon" << endl;
+    for (int i = 0; i < n; ++i) {
+        cout << i << ": " << alpha[i] << "  " << 
+        beta[i] << " " << delta[i] << " " << epsilon[i] << endl; 
+    }
 	
 }
