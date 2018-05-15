@@ -23,7 +23,7 @@ int main(int argc,char *argv[]) {
         return 0;
     }
     
-    int n;  // Dimensió del sistema.
+    int n;  // DimensiÃ³ del sistema.
     fileIn >> n;
     
     int m;  // Nombre de components no nuls d'A.
@@ -193,13 +193,13 @@ int main(int argc,char *argv[]) {
 	inv_a = (double **) calloc(n, sizeof(double*));
 	for (int i = 0; i < n; ++i) inv_a[i] = (double *) calloc(n, sizeof(double));
     
-    double *det_a;          // Determinant d'A per la funció inversa.
+    double *det_a;          // Determinant d'A per la funciÃ³ inversa.
     det_a = (double *) calloc(1, sizeof(double));
     *det_a = 1;
     
     cout << "We compute the inverse of A. Checking norm of |A*inv(A)-I|:" << endl;
     int par = inversa(C2, inv_a, n, det_a, tol);
-    if (par == 0) cout << "La matriu és singular" << endl;
+    if (par == 0) cout << "La matriu Ã©s singular" << endl;
     
     double **Q;
 	Q = (double **) calloc(n, sizeof(double*));
@@ -214,4 +214,8 @@ int main(int argc,char *argv[]) {
     }
     cout << "   1-norm: " << Norm1(Q, n) << endl;
     cout << "   supremum norm: " << SupremeNorm(Q, n) << endl << endl;
+    double cond =  Norm1(C,n) * Norm1(inv_a,n);
+    cout << "   1-norm: " << cond << endl;
+    cond = SupremeNorm(C,n) * SupremeNorm(inv_a,n);
+    cout << "   supremum norm: = " << cond << endl;
 }
