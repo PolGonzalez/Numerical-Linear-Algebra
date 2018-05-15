@@ -1,0 +1,4 @@
+    double cond = SupremeNorm(C,n) * SupremeNorm(inv_a,n)
+    cout << "Condition number_inf (A) = " << cond << endl;
+    cond =  Norm1(C,n) * Norm1(inv_a,n);
+    cout << "Condition number_1 (A) = " << cond << endl;
