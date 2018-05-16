@@ -9,7 +9,7 @@ normB=norm(BGS,2);
 X1=sprintf('Norma sub-2 de B_GS: %f', normB);
 disp(X1)
 if (normB>=1) 
-  disp('Radi espectral de B mes gran o igual que 1. Jacobi no convergeix')
+  disp('Radi espectral de B mes gran o igual que 1. Gauss Seidel no convergeix')
   return; 
 end;
 cGS=inv(tril(A))*b;
