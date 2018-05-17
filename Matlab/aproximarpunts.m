@@ -1,5 +1,7 @@
 clear all
 
+% A = load('fitxer.txt')
+
 x = linspace(0,10,100); %Vector X
 y = exp(x);            %Vector Y
 n = 3; % Grau -1 del polinomi que aproxima
