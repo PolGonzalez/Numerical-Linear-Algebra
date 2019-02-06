@@ -1,2 +1,1 @@
-# practica-numerica-joan-pol
-This is a compilation of the programs used in the lab exam of Numeric Linear Algebra of the Degree in Mathematics in FME (UPC - BarcelonaTech).
+This is a list of programs that solve problems related with matrices. One does the LU decomposition of a matrix and is able to compute the inverse of a matrix. Others include iterative methods to solve linear systems. There are also some other programs to do the LU decomposition in a much faster way if the matrix is (almost) diagonal.
